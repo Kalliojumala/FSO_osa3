@@ -57,7 +57,7 @@ app.get("/api/persons/:id", (request, response) => {
 
 //Delete entry
 app.delete("/api/persons/:id", (request, response, next) => {
-  
+  console.log(request.params.id)
   Person.findByIdAndRemove(request.params.id)
     .then((result) => {
       response.status(204).end();
@@ -91,6 +91,20 @@ app.post("/api/persons", (request, response) => {
     }
   });
 });
+
+app.put("/api/persons/:id", (request, response) => {
+  console.log(request.params.id)
+  const updatedPerson = {
+    name: request.body.name,
+    number: request.body.number,
+  }
+
+  Person.findByIdAndUpdate(request.params.id, updatedPerson, { new: true })
+    .then(updatedPerson => {
+      response.json(updatedPerson)
+    })
+    .catch(error => next(error))
+})
 
 //Get info page (date, no of entries/numbers)
 app.get("/info", (request, response) => {
