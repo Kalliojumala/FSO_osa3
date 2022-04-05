@@ -17,7 +17,7 @@ morgan.token("resbody", function (req, res) {
 });
 
 app.use(
-  morgan(":method :url :status :response-time :resbody", {
+  morgan(":method :url :status :res[content-length]  :response-time :resbody", {
     skip: function (req, res) {
       return req.method !== "POST";
     },
