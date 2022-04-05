@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 
+//Morgan config, longer "logs" on POST- reqs
 const morgan = require("morgan");
 
 app.use(
@@ -23,6 +24,10 @@ app.use(
     },
   })
 );
+
+//CORS for dev frontend connection
+const cors = require('cors')
+app.use(cors());
 
 //Hardcoded/Calculated variables below
 let numbers = [
@@ -55,7 +60,7 @@ const createInfoPage = () => {
 };
 
 //Get request, all data.
-app.get("/api/persons/", (request, response) => {
+app.get("/api/persons", (request, response) => {
   response.json(numbers);
 });
 
@@ -85,7 +90,8 @@ app.post("/api/persons", (request, response) => {
       .status(400)
       .json({ error: "Number/Person already added! Name must be unique." });
   }
-  if (!request.body.name || !request.body.number) {
+  if (!request.body.name || !request.body.phonenumber) {
+    console.log(!request.body.phonenumber, request.body.phonenumber)
     return response
       .status(400)
       .json({ error: "Pass name and number with your request!" });
@@ -104,7 +110,7 @@ app.get("/info", (request, response) => {
   console.log(Date());
 });
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}...`);
 });
