@@ -31,6 +31,8 @@ app.use(
 const cors = require("cors");
 app.use(cors());
 
+
+
 //Module "Person"
 const Person = require("./modules/personSchema");
 
@@ -43,8 +45,7 @@ app.get("/api/persons", (request, response) => {
 
 //Get single entry
 app.get("/api/persons/:id", (request, response) => {
-  const id = Number(request.params.id);
-  Person.find({ id: id }).then((result) => {
+  Person.find({ id: request.params.id }).then((result) => {
     console.log(result.length);
     if (result.length > 0) {
       response.json(result);
@@ -55,11 +56,13 @@ app.get("/api/persons/:id", (request, response) => {
 });
 
 //Delete entry
-app.delete("/api/persons/:id", (request, response) => {
-  const id = Number(request.params.id);
-  numbers = numbers.filter((number) => number.id !== id);
-
-  response.status(204).end();
+app.delete("/api/persons/:id", (request, response, next) => {
+  
+  Person.findByIdAndRemove(request.params.id)
+    .then((result) => {
+      response.status(204).end();
+    })
+    .catch((err) => next(err));
 });
 
 app.post("/api/persons", (request, response) => {
@@ -79,7 +82,6 @@ app.post("/api/persons", (request, response) => {
       const newPerson = new Person({
         name: request.body.name,
         number: request.body.number,
-        id: Math.floor(Math.random() * 20000),
       });
 
       newPerson.save().then((result) => {
