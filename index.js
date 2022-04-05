@@ -45,7 +45,7 @@ app.get("/api/persons", (request, response) => {
 
 //Get single entry
 app.get("/api/persons/:id", (request, response) => {
-  Person.find({ id: request.params.id }).then((result) => {
+  Person.find({ _id: request.params.id }).then((result) => {
     console.log(result.length);
     if (result.length > 0) {
       response.json(result);
