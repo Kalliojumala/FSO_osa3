@@ -57,7 +57,7 @@ app.get("/api/persons/:id", (request, response) => {
 
 //Delete entry
 app.delete("/api/persons/:id", (request, response, next) => {
-  console.log(request.params.id)
+  
   Person.findByIdAndRemove(request.params.id)
     .then((result) => {
       response.status(204).end();
@@ -93,7 +93,7 @@ app.post("/api/persons", (request, response) => {
 });
 
 app.put("/api/persons/:id", (request, response) => {
-  console.log(request.params.id)
+  
   const updatedPerson = {
     name: request.body.name,
     number: request.body.number,
