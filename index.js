@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 app.use(express.json());
+app.use(express.static('build'));
+
 
 //Morgan config, longer "logs" on POST- reqs
 const morgan = require("morgan");
