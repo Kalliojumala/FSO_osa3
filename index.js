@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require("express");
 const app = express();
 app.use(express.json());
@@ -31,51 +32,31 @@ app.use(
 const cors = require('cors')
 app.use(cors());
 
-//Hardcoded/Calculated variables below
-let numbers = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    number: "040-1231231",
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    number: "040-1255555",
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    number: "040-777777",
-  },
-  {
-    id: 4,
-    name: "Mary Poppendick",
-    number: "040-123111",
-  },
-];
+//Module "Person"
+const Person = require('./modules/personSchema');
 
-const createInfoPage = () => {
-  const numberOfEntries = numbers.length;
-  const requestDateTime = Date();
-  return `<div>Phonebook has ${numberOfEntries} entries</div><div>${requestDateTime}</div>`;
-};
+
 
 //Get request, all data.
 app.get("/api/persons", (request, response) => {
-  response.json(numbers);
+  Person.find({}).then((result) => {
+    response.json(result);
+  })
+  
 });
 
 //Get single entry
 app.get("/api/persons/:id", (request, response) => {
   const id = Number(request.params.id);
-  let number = numbers.find((number) => number.id === id);
-  console.log(number);
-  if (number) {
-    response.json(number);
-  } else {
-    response.status(404).end();
-  }
+  Person.find({id: id}).then((result) => {
+    console.log(result.length);
+    if (result.length > 0) {
+      response.json(result);
+    } else {
+      response.status(404).end();
+    } 
+  })
+   
 });
 
 //Delete entry
@@ -107,9 +88,18 @@ app.post("/api/persons", (request, response) => {
 
 //Get info page (date, no of entries/numbers)
 app.get("/info", (request, response) => {
-  let info = createInfoPage();
+  let numberOfEntries = 0;
+  Person.find({}).then((result) => {
+    console.log(result)
+    result.forEach(item => {
+      numberOfEntries += 1
+      
+    })
+  }).then(() => {
+  let requestDateTime = new Date();
+  const info = `<div>Phonebook has ${numberOfEntries} entries</div><div>${requestDateTime}</div>`
   response.send(info);
-  console.log(Date());
+  })
 });
 
 const PORT = process.env.PORT || 3001;
