@@ -31,10 +31,9 @@ app.use(
 const cors = require("cors");
 app.use(cors());
 
-
-
 //Module "Person"
 const Person = require("./modules/personSchema");
+console.log(Person)
 
 //Get request, all data.
 app.get("/api/persons", (request, response) => {
@@ -44,15 +43,16 @@ app.get("/api/persons", (request, response) => {
 });
 
 //Get single entry
-app.get("/api/persons/:id", (request, response) => {
-  Person.find({ _id: request.params.id }).then((result) => {
-    console.log(result.length);
-    if (result.length > 0) {
+app.get("/api/persons/:id", (request, response, next) => {
+  Person.findById({ _id: request.params.id }).then(result => {
+    if (result) {
       response.json(result);
-    } else {
+    } 
+
+    else {
       response.status(404).end();
-    }
-  });
+    }}).catch(err => next(err)
+  );
 });
 
 //Delete entry
@@ -65,7 +65,7 @@ app.delete("/api/persons/:id", (request, response, next) => {
     .catch((err) => next(err));
 });
 
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
   if (!request.body.name || !request.body.number) {
     return response
       .status(400)
@@ -87,19 +87,19 @@ app.post("/api/persons", (request, response) => {
       newPerson.save().then((result) => {
         console.log("Saved new entry!", result);
         response.json(newPerson);
-      });
+      }).catch(err => next(err));
     }
-  });
+  })
 });
 
-app.put("/api/persons/:id", (request, response) => {
+app.put("/api/persons/:id", (request, response, next) => {
   
   const updatedPerson = {
     name: request.body.name,
     number: request.body.number,
   }
 
-  Person.findByIdAndUpdate(request.params.id, updatedPerson, { new: true })
+  Person.findByIdAndUpdate(request.params.id, updatedPerson, { new: true, runValidators: true })
     .then(updatedPerson => {
       response.json(updatedPerson)
     })
@@ -122,6 +122,24 @@ app.get("/info", (request, response) => {
       response.send(info);
     });
 });
+
+const unknownEnpoint = (request, response) => {
+  response.status(404).send({error: "unknown endpoint"})
+}
+
+app.use(unknownEnpoint)
+
+const errorHandler = (error, request, response, next) => {
+  console.log(error)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({message: "malformatted id"})
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ message: error.message })
+  }
+};
+
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

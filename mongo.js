@@ -7,7 +7,9 @@ if (process.argv.length < 3) {
 
 const password = process.argv[2]
 
-const url = `mongodb+srv://Kalliojumala:${password}@fullstackopen2022.o7qg8.mongodb.net/databasetest?retryWrites=true&w=majority`
+const url = `mongodb+srv://Kalliojumala:${password}@fullstackopen2022.o7qg8.mongodb.net/retryWrites=true&w=majority`
+
+//const url = `mongodb+srv://Kalliojumala:<password>@fullstackopen2022.o7qg8.mongodb.net/?retryWrites=true&w=majority`
 
 mongoose.connect(url)
 
@@ -27,7 +29,7 @@ const addPerson = () => {
     })
 
     newPerson.save().then((result) => {
-        console.log("Saved new entry!", result)
+        console.log(`Added ${process.argv[3]}, ${process.argv[4]} to phonebook`)
         mongoose.connection.close()
     })
 }

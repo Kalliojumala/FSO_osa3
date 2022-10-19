@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "echo no test files"
+    "test": "echo \"no test files specified\" && exit 1"
   },
   "author": "Joel Kallio",
   "license": "MIT",
