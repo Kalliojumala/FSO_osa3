@@ -1,4 +1,4 @@
-require("dotenv").config();
+require('dotenv').config()
 const express = require("express");
 const app = express();
 app.use(express.json());
@@ -47,17 +47,18 @@ app.get("/api/persons/:id", (request, response, next) => {
   Person.findById({ _id: request.params.id }).then(result => {
     if (result) {
       response.json(result);
-    } 
+    }
 
     else {
       response.status(404).end();
-    }}).catch(err => next(err)
+    }
+  }).catch(err => next(err)
   );
 });
 
 //Delete entry
 app.delete("/api/persons/:id", (request, response, next) => {
-  
+
   Person.findByIdAndRemove(request.params.id)
     .then((result) => {
       response.status(204).end();
@@ -93,7 +94,7 @@ app.post("/api/persons", (request, response, next) => {
 });
 
 app.put("/api/persons/:id", (request, response, next) => {
-  
+
   const updatedPerson = {
     name: request.body.name,
     number: request.body.number,
@@ -124,7 +125,7 @@ app.get("/info", (request, response) => {
 });
 
 const unknownEnpoint = (request, response) => {
-  response.status(404).send({error: "unknown endpoint"})
+  response.status(404).send({ error: "unknown endpoint" })
 }
 
 app.use(unknownEnpoint)
@@ -133,7 +134,7 @@ const errorHandler = (error, request, response, next) => {
   console.log(error)
 
   if (error.name === 'CastError') {
-    return response.status(400).send({message: "malformatted id"})
+    return response.status(400).send({ message: "malformatted id" })
   } else if (error.name === 'ValidationError') {
     return response.status(400).json({ message: error.message })
   }
