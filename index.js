@@ -38,6 +38,7 @@ console.log(Person)
 //Get request, all data.
 app.get("/api/persons", (request, response) => {
   Person.find({}).then((result) => {
+    console.log(result)
     response.json(result);
   });
 });
@@ -145,4 +146,5 @@ app.use(errorHandler)
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}...`);
+  console.log(process.env.DB_URL)
 });
